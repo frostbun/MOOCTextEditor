@@ -5,8 +5,6 @@ package textgen;
 
 import static org.junit.Assert.*;
 
-import java.util.LinkedList;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -114,7 +112,15 @@ public class MyLinkedListTester {
 		assertEquals("Remove: check element 0 is correct ", (Integer)21, list1.get(0));
 		assertEquals("Remove: check size is correct ", 2, list1.size());
 		
-		// TODO: Add more tests here
+		try {
+			shortList.remove(-1);
+			fail("Check out of bounds");
+		}
+		catch(IndexOutOfBoundsException e) {
+		}
+
+		assertEquals("A", shortList.remove(0));
+		assertEquals(1, shortList.size());
 	}
 	
 	/** Test adding an element into the end of the list, specifically
@@ -123,19 +129,10 @@ public class MyLinkedListTester {
 	@Test
 	public void testAddEnd()
 	{
-        // TODO: implement this test
-		
-	}
-
-	
-	/** Test the size of the list */
-	@Test
-	public void testSize()
-	{
-		// TODO: implement this test
-	}
-
-	
+        shortList.add("C");
+		assertEquals("C", shortList.get(2));
+		assertEquals(3, shortList.size());
+	}	
 	
 	/** Test adding an element into the list at a specified index,
 	 * specifically:
@@ -144,19 +141,24 @@ public class MyLinkedListTester {
 	@Test
 	public void testAddAtIndex()
 	{
-        // TODO: implement this test
-		
+		shortList.add(0, "C");
+		assertEquals("C", shortList.get(0));
+		assertEquals(3, shortList.size());
+		assertEquals("A", shortList.get(1));
 	}
 	
 	/** Test setting an element in the list */
 	@Test
 	public void testSet()
 	{
-	    // TODO: implement this test
-	    
+	    try {
+			shortList.set(-1, "123");
+			fail("Check out of bounds");
+		}
+		catch(IndexOutOfBoundsException e) {
+		}
+		shortList.set(1, "123");
+		assertEquals("123", shortList.get(1));
 	}
-	
-	
-	// TODO: Optionally add more test methods.
 	
 }
