@@ -3,7 +3,6 @@
  */
 package spelling;
 
-//import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,10 +25,9 @@ public class WPTree implements WordPath {
 	// You'll need to create your own NearbyWords object here.
 	public WPTree () {
 		this.root = null;
-		// TODO initialize a NearbyWords object
-		// Dictionary d = new DictionaryHashSet();
-		// DictionaryLoader.loadDictionary(d, "data/dict.txt");
-		// this.nw = new NearbyWords(d);
+		Dictionary d = new DictionaryHashSet();
+		DictionaryLoader.loadDictionary(d, "data/dict.txt");
+		this.nw = new NearbyWords(d);
 	}
 	
 	//This constructor will be used by the grader code
@@ -41,21 +39,51 @@ public class WPTree implements WordPath {
 	// see method description in WordPath interface
 	public List<String> findPath(String word1, String word2) 
 	{
-	    // TODO: Implement this method.
+	    HashSet<String> visited = new HashSet<>();
+        List<WPTreeNode> queue = new LinkedList<>();
+        
+        // Create root (word1) and add to queue
+        this.root = new WPTreeNode(word1, null);
+        queue.add(this.root);
+
+        while(!queue.isEmpty()) {
+            // Get first word from queue
+            WPTreeNode curr = queue.remove(0);
+            String word = curr.getWord();
+            visited.add(word);
+
+            // Return the path to root (word1)
+            if(word.equals(word2)) {
+                return curr.buildPathToRoot();
+            }
+
+            // Add one mutation from "word" to queue
+            List<String> nextWords = nw.distanceOne(word, true);
+            for(String next: nextWords) {
+                if(!visited.contains(next)) {
+                    queue.add(new WPTreeNode(next, curr));
+                }
+            }
+        }
+
+        // Cant find any path
 	    return new LinkedList<String>();
 	}
 	
 	// Method to print a list of WPTreeNodes (useful for debugging)
-	private String printQueue(List<WPTreeNode> list) {
-		String ret = "[ ";
+	// private String printQueue(List<WPTreeNode> list) {
+	// 	String ret = "[ ";
 		
-		for (WPTreeNode w : list) {
-			ret+= w.getWord()+", ";
-		}
-		ret+= "]";
-		return ret;
-	}
+	// 	for (WPTreeNode w : list) {
+	// 		ret+= w.getWord()+", ";
+	// 	}
+	// 	ret+= "]";
+	// 	return ret;
+	// }
 	
+    public static void main(String[] args) {
+        // WPTree wt = new WPTree();
+    }
 }
 
 /* Tree Node in a WordPath Tree. This is a standard tree with each
