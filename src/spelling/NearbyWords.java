@@ -17,7 +17,7 @@ public class NearbyWords implements SpellingSuggest {
 	// THRESHOLD to determine how many words to look through when looking
 	// for spelling suggestions (stops prohibitively long searching)
 	// For use in the Optional Optimization in Part 2.
-	private static final int THRESHOLD = 1000; 
+	private static final int THRESHOLD = 100000; 
 
 	Dictionary dict;
 
@@ -34,8 +34,8 @@ public class NearbyWords implements SpellingSuggest {
 	 */
 	public List<String> distanceOne(String s, boolean wordsOnly )  {
 		   List<String> retList = new ArrayList<String>();
-		   insertions(s, retList, wordsOnly);
 		   substitution(s, retList, wordsOnly);
+		   insertions(s, retList, wordsOnly);
 		   deletions(s, retList, wordsOnly);
 		   return retList;
 	}
@@ -77,9 +77,9 @@ public class NearbyWords implements SpellingSuggest {
 	 */
 	public void insertions(String s, List<String> currentList, boolean wordsOnly ) {
 		s = s.toLowerCase();
-		for(int i=1; i<s.length(); ++i) {
+		for(int i=0; i<s.length(); ++i) {
 			for(int c=97; c<123; ++c) {
-				String word = s.substring(0, i-1) + (char) c + s.substring(i);
+				String word = s.substring(0, i) + (char) c + s.substring(i);
 				if(!wordsOnly || dict.isWord(word)) {
 					currentList.add(word);
 				}
@@ -87,12 +87,7 @@ public class NearbyWords implements SpellingSuggest {
 		}
 
 		for(int c=97; c<123; ++c) {
-			String word = (char) c + s;
-			if(!wordsOnly || dict.isWord(word)) {
-				currentList.add(word);
-			}
-
-			word = s + (char) c;
+			String word = s + (char) c;
 			if(!wordsOnly || dict.isWord(word)) {
 				currentList.add(word);
 			}
@@ -108,20 +103,15 @@ public class NearbyWords implements SpellingSuggest {
 	 */
 	public void deletions(String s, List<String> currentList, boolean wordsOnly ) {
 		s = s.toLowerCase();
-		for(int i=1; i<s.length()-1; ++i) {
-			String word = s.substring(0, i-1) + s.substring(i+1);
+		for(int i=1; i<s.length(); ++i) {
+			String word = s.substring(0, i-1) + s.substring(i);
 			if(!wordsOnly || dict.isWord(word)) {
 				currentList.add(word);
 			}
 		}
 
 		if(s.length() > 1) {
-			String word = s.substring(1);
-			if(!wordsOnly || dict.isWord(word)) {
-				currentList.add(word);
-			}
-	
-			word = s.substring(s.length()-2);
+			String word = s.substring(0, s.length()-1);
 			if(!wordsOnly || dict.isWord(word)) {
 				currentList.add(word);
 			}
@@ -159,9 +149,9 @@ public class NearbyWords implements SpellingSuggest {
 			}
 
 			List<String> toCheck = new ArrayList<>();
-			substitution(s, toCheck, false);
-			insertions(s, toCheck, false);
-			deletions(s, toCheck, false);
+			substitution(s, toCheck, true);
+			insertions(s, toCheck, true);
+			deletions(s, toCheck, true);
 
 			for(String toAdd: toCheck) {
 				if(!visited.contains(toAdd)) {
@@ -176,19 +166,20 @@ public class NearbyWords implements SpellingSuggest {
 	}	
 
    public static void main(String[] args) {
-	   // basic testing code to get started
-	   String word = "i";
-	   // Pass NearbyWords any Dictionary implementation you prefer
 	   Dictionary d = new DictionaryHashSet();
 	   DictionaryLoader.loadDictionary(d, "data/dict.txt");
 	   NearbyWords w = new NearbyWords(d);
-	   List<String> l = w.distanceOne(word, true);
+	   
+	   String word = "ii";
+	   List<String> l = w.distanceOne(word, false);
 	   System.out.println("One away word Strings for for \""+word+"\" are:");
+	   System.out.println(l.size());
 	   System.out.println(l+"\n");
 
-	   word = "tailo";
+	   word = "swone";
 	   List<String> suggest = w.suggestions(word, 10);
 	   System.out.println("Spelling Suggestions for \""+word+"\" are:");
+	   System.out.println(suggest.size());
 	   System.out.println(suggest);
    }
 
